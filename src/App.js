@@ -10,7 +10,8 @@ import {
 import { storage } from './firebase';
 import { v4 } from 'uuid';
 import { BsArrowRight } from 'react-icons/bs';
-
+import { motion } from 'framer-motion';
+import { fadeIn } from '../src/variants';
 function App() {
   const [imageUpload, setImageUpload] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
@@ -59,41 +60,111 @@ function App() {
   return (
     <div className=''>
       <div className='App'>
-        <p className='font-primary text-center font-bold bg-main/30 w-screen px-4 py-2'>
-          Neka i tvoja slika bude dio uspomena
-        </p>
-        <div className='flex gap-4 mt-5 items-center justify-center'>
-          <div>
-            <label title='Click to upload' htmlFor='button2'>
-              <div>
-                <span className='text-main btn font-primary font-bold'>
-                  Izaberi sliku
-                </span>
-              </div>
-            </label>
-            <input
-              hidden='true'
-              type='file'
-              name='button2'
-              id='button2'
-              ref={fileInputRef} // Attach the reference to the file input
-              onChange={(event) => {
-                setImageUpload(event.target.files[0]);
-              }}
-            />
+        <motion.div
+          initial={{
+            height: 0,
+            opacity: 0,
+          }}
+          animate={{
+            height: '50vh',
+            opacity: 1,
+            transition: {
+              ease: [0.25, 0.25, 0.25, 0.75],
+              height: {
+                duration: 1.2,
+              },
+            },
+          }}
+          exit={{
+            height: 0,
+            opacity: 0,
+            transition: {
+              height: {
+                duration: 0.4,
+              },
+              opacity: {
+                duration: 0.25,
+              },
+            },
+          }}
+          className=' bg-main/30 pb-5 h-96 flex flex-col justify-center items-center gap-8'
+        >
+          <motion.p
+            variants={fadeIn('down', 0.8)}
+            initial='hidden'
+            whileInView={'show'}
+            viewport={{ once: true, amount: 0.7 }}
+            className='font-primary uppercase  text-white text-center font-bold w-screen px-4 pt-10 pb-10 text-2xl'
+          >
+            Neka i tvoja slika bude dio uspomena
+          </motion.p>
+          <div className='flex gap-4 mt-5 items-center justify-center'>
+            <motion.div
+              variants={fadeIn('right', 1.4)}
+              initial='hidden'
+              whileInView={'show'}
+              viewport={{ once: true, amount: 0.7 }}
+            >
+              <label title='Click to upload' htmlFor='button2'>
+                <div>
+                  <span className='text-main btn font-primary font-bold'>
+                    Izaberi sliku
+                  </span>
+                </div>
+              </label>
+              <input
+                hidden='true'
+                type='file'
+                name='button2'
+                id='button2'
+                ref={fileInputRef} // Attach the reference to the file input
+                onChange={(event) => {
+                  setImageUpload(event.target.files[0]);
+                }}
+              />
+            </motion.div>
+            <motion.div
+              variants={fadeIn('right', 2)}
+              initial='hidden'
+              whileInView={'show'}
+              viewport={{ once: true, amount: 0.7 }}
+              className='flex items-center'
+            >
+              <BsArrowRight />
+            </motion.div>
+            <motion.button
+              variants={fadeIn('right', 1.8)}
+              initial='hidden'
+              whileInView={'show'}
+              viewport={{ once: true, amount: 0.7 }}
+              className='btn font-bold font-primary'
+              onClick={uploadFile}
+            >
+              Podijeli sliku
+            </motion.button>
           </div>
-          <div className='flex items-center'>
-            <BsArrowRight />
-          </div>
-          <button className='btn font-bold font-primary' onClick={uploadFile}>
-            Podijeli sliku
-          </button>
-        </div>
-        <div className='mt-12 mb-4 text-center font-bold bg-main/30 rounded-full px-4 py-2 w-2/4 mx-auto '>
+        </motion.div>
+        <motion.div
+          variants={fadeIn('down', 2)}
+          initial='hidden'
+          whileInView={'show'}
+          viewport={{ once: true, amount: 0.7 }}
+          className='mt-12 mb-4 text-center font-bold bg-main/30 rounded-full px-4 py-2 w-2/4 mx-auto '
+        >
           Zadnjih 5 slika
-        </div>
+        </motion.div>
         {imageUrls.map((url) => {
-          return <img className='mx-auto mb-1' src={url} alt='uploaded' />;
+          return (
+            <motion.img
+              variants={fadeIn('down', 2.2)}
+              initial='hidden'
+              whileInView={'show'}
+              viewport={{ once: true, amount: 0.7 }}
+              className='mx-auto mb-1'
+              src={url}
+              alt='uploaded'
+            />
+          );
         })}
       </div>
     </div>
