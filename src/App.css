@@ -17,17 +17,19 @@ body {
 
 .btn {
   color: #544125;
-  padding: 0.5em 1em;
+  padding: 0.3em 1em;
   font-size: 22px;
   border-radius: 50px;
+  height: auto; /* Ensure height is auto */
+  display: inline-block;
   background: #fff;
   cursor: pointer;
-  border: 1px solid #e8e8e8;
   transition: all 0.3s;
 }
 
+/* Ensure display is inline-block */
 .btn:active {
-  color: #666;
+  color: #544125;
   box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
 }
 .card {
@@ -36,4 +38,28 @@ body {
   background-color: rgba(255, 255, 255, 0.3);
   border-radius: 100px;
   width: 90vw;
+}
+/* Progress Bar */
+.w-full {
+  width: 30%;
+}
+
+.bg-gray-200 {
+  background-color: #fff;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.h-4 {
+  height: 0.5rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.bg-blue-600 {
+  background-color: #544125;
 }
