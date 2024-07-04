@@ -18,6 +18,7 @@ module.exports = {
     },
     backgroundImage: {
       site: "url('./assets/weddingbg.jpg')",
+      wedimg: "url('./assets/weddingimg.png')",
     },
   },
   plugins: [],

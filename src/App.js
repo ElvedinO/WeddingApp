@@ -9,7 +9,7 @@ import {
 } from 'firebase/storage';
 import { storage } from './firebase';
 import { v4 } from 'uuid';
-import { BsArrowRight } from 'react-icons/bs';
+import { BsArrowRight, BsArrowDown } from 'react-icons/bs';
 import { motion } from 'framer-motion';
 import { fadeIn } from '../src/variants';
 import { bannerBg } from '../src/assets/weddingbg.jpg';
@@ -59,24 +59,27 @@ function App() {
   }, [uploadTrigger]); // Add uploadTrigger as a dependency
 
   return (
-    <div className=''>
-      <div className='App'>
+    <div>
+      <div className=' relative'>
         <motion.div
           variants={fadeIn('down', 0.4)}
           initial='hidden'
           whileInView={'show'}
           viewport={{ once: true, amount: 0.7 }}
-          className=' bg-site bg-no-repeat bg-cover lg:bg-[#DFC2B0] overflow-hidden  pb-5 h-96 flex flex-col justify-center items-center gap-8'
+          className='bg-site bg-no-repeat bg-cover  overflow-hidden  pb-5 h-screen flex flex-col justify-center items-center gap-8'
         >
-          <motion.p
+          <motion.div
             variants={fadeIn('down', 0.8)}
             initial='hidden'
             whileInView={'show'}
             viewport={{ once: true, amount: 0.7 }}
-            className='font-primary   text-[#544125] text-center font-bold w-screen px-2 py-5 text-4xl card'
+            className='flex flex-col items-center font-primarytext-[#544125] text-center w-screen text-4xl'
           >
-            Neka i tvoja slika bude dio uspomena
-          </motion.p>
+            <div className='bg-wedimg bg-cover bg-no-repeat overflow-hidden h-52 w-52'></div>
+            <p className='card px-6 py-5'>
+              Neka i tvoja slika bude dio uspomena
+            </p>
+          </motion.div>
           <div className='flex gap-4 mt-5 items-center justify-center'>
             <motion.div
               variants={fadeIn('right', 1.4)}
@@ -122,30 +125,24 @@ function App() {
               Podijeli sliku
             </motion.button>
           </div>
+
+          <motion.div
+            variants={fadeIn('down', 2.5)}
+            initial='hidden'
+            whileInView={'show'}
+            viewport={{ once: true, amount: 0.1 }}
+            className=' absolute bottom-20 flex items-center justify-between  bg-[#E4CCB8]/30 rounded-full px-4 py-2 w-3/4 mx-auto text-main text-2xl   '
+          >
+            <BsArrowDown className=' opacity-50' />
+            <div>Zadnjih 5 slika</div>
+            <BsArrowDown className='opacity-50' />
+          </motion.div>
         </motion.div>
-        <motion.div
-          variants={fadeIn('up', 1)}
-          initial='hidden'
-          whileInView={'show'}
-          viewport={{ once: true, amount: 0.7 }}
-          className='mt-12 mb-4 text-center font-bold bg-[#E4CCB8]/50 rounded-full px-4 py-2 w-2/4 mx-auto text-main text-2xl  '
-        >
-          Zadnjih 5 slika
-        </motion.div>
-        {imageUrls.map((url) => {
-          return (
-            <motion.img
-              variants={fadeIn('up', 1.2)}
-              initial='hidden'
-              whileInView={'show'}
-              viewport={{ once: true, amount: 0.7 }}
-              className='mx-auto mb-1'
-              src={url}
-              alt='uploaded'
-            />
-          );
-        })}
       </div>
+
+      {imageUrls.map((url) => {
+        return <img className='mx-auto mb-1' src={url} alt='uploaded' />;
+      })}
     </div>
   );
 }
