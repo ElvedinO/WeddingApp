@@ -2,7 +2,7 @@ module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     fontFamily: {
-      primary: 'Nunito',
+      primary: 'Dancing+Script',
     },
 
     screens: {
@@ -15,6 +15,9 @@ module.exports = {
       colors: {
         main: '#544125',
       },
+    },
+    backgroundImage: {
+      site: "url('./assets/weddingbg.jpg')",
     },
   },
   plugins: [],

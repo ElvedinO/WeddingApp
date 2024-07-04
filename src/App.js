@@ -12,6 +12,7 @@ import { v4 } from 'uuid';
 import { BsArrowRight } from 'react-icons/bs';
 import { motion } from 'framer-motion';
 import { fadeIn } from '../src/variants';
+import { bannerBg } from '../src/assets/weddingbg.jpg';
 function App() {
   const [imageUpload, setImageUpload] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
@@ -61,40 +62,18 @@ function App() {
     <div className=''>
       <div className='App'>
         <motion.div
-          initial={{
-            height: 0,
-            opacity: 0,
-          }}
-          animate={{
-            height: '50vh',
-            opacity: 1,
-            transition: {
-              ease: [0.25, 0.25, 0.25, 0.75],
-              height: {
-                duration: 1.2,
-              },
-            },
-          }}
-          exit={{
-            height: 0,
-            opacity: 0,
-            transition: {
-              height: {
-                duration: 0.4,
-              },
-              opacity: {
-                duration: 0.25,
-              },
-            },
-          }}
-          className=' bg-main/30 pb-5 h-96 flex flex-col justify-center items-center gap-8'
+          variants={fadeIn('down', 0.4)}
+          initial='hidden'
+          whileInView={'show'}
+          viewport={{ once: true, amount: 0.7 }}
+          className=' bg-site bg-no-repeat bg-cover lg:bg-[#DFC2B0] overflow-hidden  pb-5 h-96 flex flex-col justify-center items-center gap-8'
         >
           <motion.p
             variants={fadeIn('down', 0.8)}
             initial='hidden'
             whileInView={'show'}
             viewport={{ once: true, amount: 0.7 }}
-            className='font-primary uppercase  text-white text-center font-bold w-screen px-4 pt-10 pb-10 text-2xl'
+            className='font-primary   text-[#544125] text-center font-bold w-screen px-2 py-5 text-4xl card'
           >
             Neka i tvoja slika bude dio uspomena
           </motion.p>
@@ -145,18 +124,18 @@ function App() {
           </div>
         </motion.div>
         <motion.div
-          variants={fadeIn('down', 2)}
+          variants={fadeIn('up', 1)}
           initial='hidden'
           whileInView={'show'}
           viewport={{ once: true, amount: 0.7 }}
-          className='mt-12 mb-4 text-center font-bold bg-main/30 rounded-full px-4 py-2 w-2/4 mx-auto '
+          className='mt-12 mb-4 text-center font-bold bg-[#E4CCB8]/50 rounded-full px-4 py-2 w-2/4 mx-auto text-main text-2xl  '
         >
           Zadnjih 5 slika
         </motion.div>
         {imageUrls.map((url) => {
           return (
             <motion.img
-              variants={fadeIn('down', 2.2)}
+              variants={fadeIn('up', 1.2)}
               initial='hidden'
               whileInView={'show'}
               viewport={{ once: true, amount: 0.7 }}
