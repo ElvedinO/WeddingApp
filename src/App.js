@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   ref,
   uploadBytesResumable,
@@ -17,63 +17,69 @@ import { dotPulse } from 'ldrs';
 function App() {
   const [imageUpload, setImageUpload] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
-  const [uploadTrigger, setUploadTrigger] = useState(0); // New state variable
-  const [progress, setProgress] = useState(0); // Progress state
-  const [loading, setLoading] = useState(true); // Loading state
+  const [uploadTrigger, setUploadTrigger] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [loading, setLoading] = useState(true);
   const imagesListRef = ref(storage, 'images/');
-  const fileInputRef = useRef(null); // Create a reference for the file input
+  const fileInputRef = useRef(null);
 
   dotPulse.register();
-  const uploadFile = () => {
+
+  const uploadFile = useCallback(() => {
     if (imageUpload == null) return;
     const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
     const uploadTask = uploadBytesResumable(imageRef, imageUpload);
+
     uploadTask.on(
       'state_changed',
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setProgress(progress); // Update progress state
+        setProgress(progress);
       },
       (error) => {
         console.error(error);
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-          setImageUrls((prev) => [url, ...prev]); // Add new image URL to the beginning
-          setUploadTrigger((prev) => prev + 1); // Trigger re-fetch
-          fileInputRef.current.value = ''; // Clear the file input value
-          setImageUpload(null); // Reset imageUpload state to null
-          setProgress(0); // Reset progress state
+          setImageUrls((prev) => [url, ...prev]);
+          setUploadTrigger((prev) => prev + 1);
+          fileInputRef.current.value = '';
+          setImageUpload(null);
+          setProgress(0);
         });
       }
     );
-  };
+  }, [imageUpload]);
 
   useEffect(() => {
     const fetchImages = async () => {
-      setLoading(true); // Start loading
-      const response = await listAll(imagesListRef);
-      const promises = response.items.map((item) =>
-        getMetadata(item).then((metadata) => ({
-          item,
-          timeCreated: metadata.timeCreated,
-        }))
-      );
-      const itemsWithMetadata = await Promise.all(promises);
-      itemsWithMetadata.sort(
-        (a, b) => new Date(b.timeCreated) - new Date(a.timeCreated)
-      );
-      const lastFiveItems = itemsWithMetadata.slice(0, 5);
-      // Fetch all URLs first
-      const urlPromises = lastFiveItems.map(({ item }) => getDownloadURL(item));
-      const urls = await Promise.all(urlPromises);
-      // Update state once with all URLs
-      setImageUrls(urls);
-      setLoading(false); // End loading
+      setLoading(true);
+      try {
+        const response = await listAll(imagesListRef);
+        const itemsWithMetadata = await Promise.all(
+          response.items.map(async (item) => {
+            const metadata = await getMetadata(item);
+            const url = await getDownloadURL(item);
+            return { url, timeCreated: metadata.timeCreated };
+          })
+        );
+
+        itemsWithMetadata.sort(
+          (a, b) => new Date(b.timeCreated) - new Date(a.timeCreated)
+        );
+        const lastFiveItems = itemsWithMetadata.slice(0, 5);
+        const urls = lastFiveItems.map((item) => item.url);
+        setImageUrls(urls);
+      } catch (error) {
+        console.error('Error fetching images:', error);
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchImages();
-  }, [uploadTrigger]); // Add uploadTrigger as a dependency
+  }, [uploadTrigger]);
 
   return (
     <div>
@@ -97,7 +103,7 @@ function App() {
               Neka i tvoja slika bude dio uspomena
             </p>
           </motion.div>
-          <div className='flex gap-4 items-center justify-center'>
+          <div className='flex relative gap-4 items-center justify-center'>
             <motion.div
               variants={fadeIn('right', 1.4)}
               initial='hidden'
@@ -116,7 +122,7 @@ function App() {
                 type='file'
                 name='button2'
                 id='button2'
-                ref={fileInputRef} // Attach the reference to the file input
+                ref={fileInputRef}
                 onChange={(event) => {
                   setImageUpload(event.target.files[0]);
                 }}
@@ -141,21 +147,23 @@ function App() {
             >
               Podijeli sliku
             </motion.button>
+
+            {progress > 0 && (
+              <div className='absolute top-10 w-full bg-gray-200 rounded-full h-4 mt-4'>
+                <div
+                  className='bg-blue-600 h-4 rounded-full'
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+            )}
           </div>
-          {progress > 0 && (
-            <div className='absolute top-[75vh] md:top-[65vh] lg:top-[70vh] w-full bg-gray-200 rounded-full h-4 mt-4'>
-              <div
-                className='bg-blue-600 h-4 rounded-full'
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-          )}
+
           <motion.div
             variants={fadeIn('down', 2.5)}
             initial='hidden'
             whileInView={'show'}
             viewport={{ once: true, amount: 0.1 }}
-            className='absolute bottom-20 flex items-center justify-between bg-[#E4CCB8]/30 rounded-full px-4 py-2 w-3/4 mx-auto text-main text-2xl'
+            className='absolute bottom-[2vh] flex items-center justify-between bg-[#E4CCB8]/30 rounded-full px-4 py-2 w-3/4 mx-auto text-main text-2xl'
           >
             <BsArrowDown className='opacity-50' />
             <div>Zadnjih 5 slika</div>
@@ -164,20 +172,23 @@ function App() {
         </motion.div>
       </div>
       {loading ? (
-        <div className=' flex justify-center items-center pb-5'>
+        <div className='flex justify-center items-center pb-5'>
           <l-dot-pulse size='43' speed='1.3' color='#544125'></l-dot-pulse>
         </div>
       ) : (
-        imageUrls.map((url) => {
-          return (
-            <img
-              className='mx-auto mb-1'
-              src={url}
-              alt='uploaded'
-              loading='lazy'
-            />
-          );
-        })
+        imageUrls.map((url) => (
+          <motion.img
+            variants={fadeIn('up', 0.5)}
+            initial='hidden'
+            whileInView={'show'}
+            viewport={{ once: true, amount: 0.1 }}
+            key={url}
+            className='mx-auto mb-1 lg:w-1/2 px-1 rounded-2xl'
+            src={url}
+            alt='uploaded'
+            loading='lazy'
+          />
+        ))
       )}
     </div>
   );
