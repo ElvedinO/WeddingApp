@@ -20,6 +20,8 @@ function App() {
   const [uploadTrigger, setUploadTrigger] = useState(0);
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [imageSelected, setImageSelected] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false); // New state variable
   const imagesListRef = ref(storage, 'images/');
   const fileInputRef = useRef(null);
 
@@ -47,6 +49,8 @@ function App() {
           fileInputRef.current.value = '';
           setImageUpload(null);
           setProgress(0);
+          setImageSelected(false);
+          setUploadSuccess(true); // Set upload success to true
         });
       }
     );
@@ -83,7 +87,7 @@ function App() {
 
   return (
     <div>
-      <div className='relative'>
+      <div className='relative h-[100svh]'>
         <motion.div
           variants={fadeIn('down', 0.4)}
           initial='hidden'
@@ -118,13 +122,15 @@ function App() {
                 </div>
               </label>
               <input
-                hidden='true'
+                hidden={true}
                 type='file'
                 name='button2'
                 id='button2'
                 ref={fileInputRef}
                 onChange={(event) => {
                   setImageUpload(event.target.files[0]);
+                  setImageSelected(true);
+                  setUploadSuccess(false); // Reset upload success on new selection
                 }}
               />
             </motion.div>
@@ -149,12 +155,22 @@ function App() {
             </motion.button>
 
             {progress > 0 && (
-              <div className='absolute top-10 w-full bg-gray-200 rounded-full h-4 mt-4'>
+              <div className='absolute top-16 w-full bg-gray-200 rounded-full h-4 mt-4'>
                 <div
                   className='bg-blue-600 h-4 rounded-full'
                   style={{ width: `${progress}%` }}
                 ></div>
               </div>
+            )}
+            {imageSelected && (
+              <p className='absolute top-12 text-green-400'>
+                Uspješno ste izabrali sliku. Pritisnite na Podijeli sliku.
+              </p>
+            )}
+            {uploadSuccess && (
+              <p className='absolute top-12 text-green-500'>
+                Hvala Vam! Slika je uspješno podijeljena.
+              </p>
             )}
           </div>
 
