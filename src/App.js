@@ -87,7 +87,7 @@ function App() {
 
   return (
     <div>
-      <div className='relative h-[100svh]'>
+      <div className='relative'>
         <motion.div
           variants={fadeIn('down', 0.4)}
           initial='hidden'
@@ -179,7 +179,7 @@ function App() {
             initial='hidden'
             whileInView={'show'}
             viewport={{ once: true, amount: 0.1 }}
-            className='absolute bottom-[2vh] flex items-center justify-between bg-[#E4CCB8]/30 rounded-full px-4 py-2 w-3/4 mx-auto text-main text-2xl'
+            className='absolute bottom-[6svh] flex items-center justify-between bg-[#E4CCB8]/30 rounded-full px-4 py-2 w-3/4 mx-auto text-main text-2xl'
           >
             <BsArrowDown className='opacity-50' />
             <div>Zadnjih 5 slika</div>
